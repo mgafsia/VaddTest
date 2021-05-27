@@ -13,19 +13,27 @@ export class NewsListComponent implements OnInit, OnDestroy {
   constructor(private newService: NewsService) { }
   allNews: NewsModel[] = [];
   subject = '';
+  selectedLanguage: LANGUAGE = LANGUAGE.FR;
+  LANGUAGE = LANGUAGE;
+
 
   ngOnInit(): void {
-    this.search(this.subject);
+    this.search(this.subject, this.selectedLanguage);
   }
 
-  search(subject: string) {
-    this.subscriptions$.push(this.newService.getNews(LANGUAGE.FR, subject).subscribe(response => {
+  search(subject: string, language: LANGUAGE) {
+    this.subscriptions$.push(this.newService.getNews(this.selectedLanguage, subject).subscribe(response => {
       this.allNews = response.articles;
     }));
   }
 
   searchForSubject() {
-    this.search(this.subject);
+    this.search(this.subject, this.selectedLanguage);
+  }
+
+  changeSubjectLanguage(event: any) {
+    this.selectedLanguage = event;
+    this.search(this.subject, event);
   }
 
   ngOnDestroy(): void {

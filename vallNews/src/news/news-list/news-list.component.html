@@ -1,8 +1,11 @@
 <div *ngIf="allNews && allNews.length > 0 else noNews">
   <div>
-    <p><input type="text" id="username" name="username" [(ngModel)]="subject"></p>
+    <input type="text" id="username" name="username" [(ngModel)]="subject">
     <button type="button" (click)="searchForSubject()">Search</button>
   </div>
+  <select [ngModel]="selectedLanguage" (ngModelChange)="changeSubjectLanguage($event)">
+    <option *ngFor="let option of [LANGUAGE.FR, LANGUAGE.EN]" [value]="option" >{{option}}</option>
+  </select>
   <div class="separation"></div>
   <div>
     <ng-container *ngFor="let newsElement of allNews ">
