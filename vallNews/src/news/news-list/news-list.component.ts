@@ -12,11 +12,20 @@ export class NewsListComponent implements OnInit, OnDestroy {
   subscriptions$: Array<Subscription> = [];
   constructor(private newService: NewsService) { }
   allNews: NewsModel[] = [];
+  subject = '';
 
   ngOnInit(): void {
-    this.subscriptions$.push(this.newService.getNews(LANGUAGE.FR).subscribe(response => {
+    this.search(this.subject);
+  }
+
+  search(subject: string) {
+    this.subscriptions$.push(this.newService.getNews(LANGUAGE.FR, subject).subscribe(response => {
       this.allNews = response.articles;
     }));
+  }
+
+  searchForSubject() {
+    this.search(this.subject);
   }
 
   ngOnDestroy(): void {

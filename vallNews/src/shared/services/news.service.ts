@@ -14,8 +14,8 @@ export class NewsService {
   constructor(private readonly http: HttpClient) {
   }
 
-  getNews(language: LANGUAGE): Observable<newsResultModel> {
-    let params = new HttpParams().set("language",language);
+  getNews(language: LANGUAGE, subject = ''): Observable<newsResultModel> {
+    let params = new HttpParams().set("language",language).set("q", subject);
 
     return this.http.get<newsResultModel>(`${this.TOP_HEADLINES_URI}`, {params});
   }
