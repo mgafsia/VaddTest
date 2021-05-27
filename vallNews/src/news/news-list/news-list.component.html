@@ -1,12 +1,21 @@
-<div *ngIf="allNews && allNews.length > 0 else noNews">
-  <div>
-    <input type="text" id="username" name="username" [(ngModel)]="subject">
-    <button type="button" (click)="searchForSubject()">Search</button>
-  </div>
+<div>
+  <input type="text" id="username" name="username" [(ngModel)]="subject">
+  <button type="button" (click)="searchForSubject()">Search</button>
+</div>
+<div>
+  <p>Language :
   <select [ngModel]="selectedLanguage" (ngModelChange)="changeSubjectLanguage($event)">
     <option *ngFor="let option of [LANGUAGE.FR, LANGUAGE.EN]" [value]="option" >{{option}}</option>
   </select>
-  <div class="separation"></div>
+</div>
+<div>
+  <p>Source :
+  <select [ngModel]="selectedSourceId" (ngModelChange)="changeSource($event)">
+    <option *ngFor="let source of sources" [value]="source.id" >{{source.name}}</option>
+  </select>
+</div>
+<div class="separation"></div>
+<div *ngIf="allNews && allNews.length > 0 else noNews">
   <div>
     <ng-container *ngFor="let newsElement of allNews ">
       <app-news-element  [news]="newsElement"></app-news-element>

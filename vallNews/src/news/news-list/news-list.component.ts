@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {NewsService} from '../../shared/services/news.service';
-import {LANGUAGE, NewsModel} from '../../shared/model/news.model';
+import { LANGUAGE, NewsModel, SourceModel } from '../../shared/model/news.model';
 
 @Component({
   selector: 'app-news-list',
@@ -15,25 +15,42 @@ export class NewsListComponent implements OnInit, OnDestroy {
   subject = '';
   selectedLanguage: LANGUAGE = LANGUAGE.FR;
   LANGUAGE = LANGUAGE;
+  sources: SourceModel[] = [];
+  selectedSourceId: string;
 
 
   ngOnInit(): void {
-    this.search(this.subject, this.selectedLanguage);
+    this.search(this.subject, this.selectedLanguage, this.selectedSourceId);
+    this.getSourcesList();
   }
 
-  search(subject: string, language: LANGUAGE) {
-    this.subscriptions$.push(this.newService.getNews(this.selectedLanguage, subject).subscribe(response => {
+  search(subject: string, language: LANGUAGE, source: string) {
+    this.subscriptions$.push(this.newService.getNews(language, subject).subscribe(response => {
       this.allNews = response.articles;
     }));
   }
 
-  searchForSubject() {
-    this.search(this.subject, this.selectedLanguage);
+  getSourcesList() {
+    this.subscriptions$.push(this.newService.getSources().subscribe(response => {
+      this.sources = response.sources;
+    }));
   }
 
-  changeSubjectLanguage(event: any) {
-    this.selectedLanguage = event;
-    this.search(this.subject, event);
+  searchForSubject() {
+    this.search(this.subject, this.selectedLanguage, this.selectedSourceId);
+  }
+
+  changeSubjectLanguage(language: LANGUAGE) {
+    this.selectedLanguage = language;
+    this.search(this.subject, language, this.selectedSourceId);
+  }
+
+
+  changeSource(sourceId: string) {
+    this.selectedSourceId = sourceId;
+    if (sourceId) {
+      this.allNews = this.allNews.filter(news => news.source && news.source.id === sourceId);
+    }
   }
 
   ngOnDestroy(): void {

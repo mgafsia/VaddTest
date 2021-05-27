@@ -15,6 +15,16 @@ export interface newsResultModel {
 export interface SourceModel {
   id: string;
   name: string;
+  category?: string;
+  country?: string;
+  description?: string;
+  language?: string;
+  url: string;
+}
+
+export interface SourcesResultModel {
+  sources: SourceModel[];
+  status: number;
 }
 
 export enum LANGUAGE {
