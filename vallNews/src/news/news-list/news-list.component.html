@@ -10,8 +10,8 @@
 </div>
 <div>
   <p>Source :
-  <select [ngModel]="selectedSourceId" (ngModelChange)="changeSource($event)">
-    <option *ngFor="let source of sources" [value]="source.id" >{{source.name}}</option>
+  <select [ngModel]="selectedSourceName" (ngModelChange)="filterBySource($event)">
+    <option *ngFor="let source of sources" [value]="source.name" >{{source.name}}</option>
   </select>
 </div>
 <div class="separation"></div>

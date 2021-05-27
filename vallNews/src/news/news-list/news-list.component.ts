@@ -16,11 +16,11 @@ export class NewsListComponent implements OnInit, OnDestroy {
   selectedLanguage: LANGUAGE = LANGUAGE.FR;
   LANGUAGE = LANGUAGE;
   sources: SourceModel[] = [];
-  selectedSourceId: string;
+  selectedSourceName: string;
 
 
   ngOnInit(): void {
-    this.search(this.subject, this.selectedLanguage, this.selectedSourceId);
+    this.search(this.subject, this.selectedLanguage, this.selectedSourceName);
     this.getSourcesList();
   }
 
@@ -37,19 +37,24 @@ export class NewsListComponent implements OnInit, OnDestroy {
   }
 
   searchForSubject() {
-    this.search(this.subject, this.selectedLanguage, this.selectedSourceId);
+    this.search(this.subject, this.selectedLanguage, this.selectedSourceName);
+    this.filter();
   }
 
   changeSubjectLanguage(language: LANGUAGE) {
     this.selectedLanguage = language;
-    this.search(this.subject, language, this.selectedSourceId);
+    this.search(this.subject, language, this.selectedSourceName);
+    this.filter();
   }
 
+  filter() {
+    this.filterBySource(this.selectedSourceName);
+  }
 
-  changeSource(sourceId: string) {
-    this.selectedSourceId = sourceId;
-    if (sourceId) {
-      this.allNews = this.allNews.filter(news => news.source && news.source.id === sourceId);
+  filterBySource(sourceName: string) {
+    this.selectedSourceName = sourceName;
+    if (sourceName) {
+      this.allNews = this.allNews.filter(news => news.source && news.source.name === sourceName);
     }
   }
 
