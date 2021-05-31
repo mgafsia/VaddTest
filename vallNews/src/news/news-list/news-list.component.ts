@@ -1,65 +1,52 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Subscription} from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import {NewsService} from '../../shared/services/news.service';
-import { LANGUAGE, NewsModel, SourceModel } from '../../shared/model/news.model';
+import { LANGUAGE, NewsModel, newsResultModel, SourceModel, SourcesResultModel } from '../../shared/model/news.model';
 
 @Component({
   selector: 'app-news-list',
   templateUrl: './news-list.component.html',
   styleUrls: ['./news-list.component.scss']
 })
-export class NewsListComponent implements OnInit, OnDestroy {
-  subscriptions$: Array<Subscription> = [];
+export class NewsListComponent implements OnInit {
   constructor(private newService: NewsService) { }
   allNews: NewsModel[] = [];
+  allNews$: Observable<newsResultModel>;
   subject = '';
   selectedLanguage: LANGUAGE = LANGUAGE.FR;
   LANGUAGE = LANGUAGE;
-  sources: SourceModel[] = [];
+  sources$: Observable<SourcesResultModel>;
   selectedSourceName: string;
 
 
   ngOnInit(): void {
-    this.search(this.subject, this.selectedLanguage, this.selectedSourceName);
-    this.getSourcesList();
+    this.search();
+    this.sources$ = this.newService.getSources();
   }
 
-  search(subject: string, language: LANGUAGE, source: string) {
-    this.subscriptions$.push(this.newService.getNews(language, subject).subscribe(response => {
-      this.allNews = response.articles;
-    }));
-  }
-
-  getSourcesList() {
-    this.subscriptions$.push(this.newService.getSources().subscribe(response => {
-      this.sources = response.sources;
-    }));
+  search() {
+    this.allNews$ = this.newService.getNews(this.selectedLanguage, this.subject);
   }
 
   searchForSubject() {
-    this.search(this.subject, this.selectedLanguage, this.selectedSourceName);
+    this.search();
     this.filter();
   }
 
   changeSubjectLanguage(language: LANGUAGE) {
     this.selectedLanguage = language;
-    this.search(this.subject, language, this.selectedSourceName);
-    this.filter();
+    this.search();
+    this.filter();  // todo : remove filter
   }
 
   filter() {
     this.filterBySource(this.selectedSourceName);
   }
 
-  filterBySource(sourceName: string) {
+  filterBySource(sourceName: string) { // todo : make it work
     this.selectedSourceName = sourceName;
     if (sourceName) {
       this.allNews = this.allNews.filter(news => news.source && news.source.name === sourceName);
     }
   }
-
-  ngOnDestroy(): void {
-    this.subscriptions$.filter(subscription => !!subscription).forEach(subscription => subscription.unsubscribe());
-  }
-
 }

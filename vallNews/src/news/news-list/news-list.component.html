@@ -11,17 +11,20 @@
 <div>
   <p>Source :
   <select [ngModel]="selectedSourceName" (ngModelChange)="filterBySource($event)">
-    <option *ngFor="let source of sources" [value]="source.name" >{{source.name}}</option>
+    <option *ngFor="let source of (sources$ | async)?.sources" [value]="source.name" >{{source.name}}</option>
   </select>
 </div>
 <div class="separation"></div>
-<div *ngIf="allNews && allNews.length > 0 else noNews">
+<div *ngIf="(allNews$ |async)?.articles as allNews ; else loading">
   <div>
-    <ng-container *ngFor="let newsElement of allNews ">
-      <app-news-element  [news]="newsElement"></app-news-element>
-    </ng-container>
+    <div *ngIf="allNews?.length === 0; else displayNews"> No result for {{this.subject}}</div>
+    <ng-template #displayNews>
+      <ng-container *ngFor="let newsElement of allNews">
+        <app-news-element [news]="newsElement"></app-news-element>
+      </ng-container>
+    </ng-template>
   </div>
 </div>
-<ng-template #noNews>
-  <p> No result for {{this.subject}}</p>
+<ng-template #loading>
+  <p> Loading ... </p>
 </ng-template>
